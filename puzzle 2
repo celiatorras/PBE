@@ -1,0 +1,65 @@
+mport threading
+import gi
+import Read
+
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk
+from gi.repository import Gdk #necessitem poder posar color
+from gi.repository import GLib
+
+class MyWindow(Gtk.Window):
+    def __init__(self):
+        Gtk.Window.__init__(self,title="Puzzle 2")
+        self.set_border_width(10)
+
+        self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+
+        self.add(self.box)
+
+        self.label=Gtk.Label(label="Please log in with your university card")
+        self.label.set_justify(Gtk.Justification.CENTER)
+        self.label.set_size_request(400,100)
+        self.box.get_style_context().add_class("fons-vermell")
+        self.box.pack_start(self.label, True, True, 0)
+
+        self.button = Gtk.Button(label="Clear")
+        self.button.connect("clicked", self.button_clicked)
+        self.button.set_sensitive(False)
+
+        self.box.pack_start(self.button, True, True, 0)
+
+        self.thread=threading.Thread(target=self.read_id)
+        self.thread.setDaem       
+        self.thread.start()
+
+    def button_clicked(self, widget):
+        self.label.set_text("Please login with your university card")
+        self .thread=threading.Thread(target=self.read_id)
+        self.box.get_style_context().remove_class("fons-blau")
+        self.box.get_style_context().add_class("fons-vermell")
+        self.thread.start()
+
+    def read_id(self):
+        puzzle1 = Read.RFIDReader()
+        self.id = puzzle1.read_card()
+        GLib.idle_add(self.carrega)
+
+    def carrega(self):
+        self.label.set_text("id: "+self.id)
+        self.button.set_sensitive(True)
+        self.box.get_style_context().remove_class("fons-vermell")
+        self.box.get_style_context().add_class("fons-blau")
+
+win = MyWindow()
+win.connect("destroy", Gtk.main_quit)
+
+css_provider = Gtk.CssProvider()
+css_provider.load_from_path('/home/celia/pi-rfid/puzzle2.css')
+
+context = Gtk.StyleContext()
+context.add_provider_for_screen(Gdk.Screen.get_default(), css_provider, Gtk.STY>
+
+win.show_all()
+Gtk.main()
+on(True)
+        
